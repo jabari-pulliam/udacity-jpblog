@@ -15,19 +15,16 @@
 # limitations under the License.
 #
 import os
-import re
 import hmac
 
 import webapp2
 import jinja2
 
-import models
+from models import User
+from models import BlogArticle
 
 BASE_URL = '/'
 SECRET = 'X9v1D171JvCdovjch9XT'
-USERNAME_PATTERN = re.compile("^[a-zA-Z0-9_-]{3,20}$")
-PASSWORD_PATTERN = re.compile("^.{3,20}$")
-EMAIL_PATTERN = re.compile("^[\S]+@[\S]+.[\S]+$")
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
@@ -65,6 +62,12 @@ class Handler(webapp2.RequestHandler):
         self.response.delete_cookie("userid")
         self.redirect('/')
 
+    def get_current_user(self):
+        userid_cookie = self.request.cookies.get('userid')
+        user_key = self.check_secure_val(userid_cookie)
+        if user_key:
+            return User.get_from_urlsafe_key(user_key)
+
 
 class MainHandler(Handler):
     def get(self):
@@ -75,6 +78,50 @@ class SignUpHandler(Handler):
     def get(self):
         self.render('signup_form.html')
 
+    def post(self):
+        # Get the data from the request
+        username = self.request.get('username')
+        email = self.request.get('email')
+        password = self.request.get('password')
+        verify = self.request.get('verify')
+
+        username_error = None
+        email_error = None
+        password_error = None
+        verify_error = None
+
+        # Validate the form input
+        is_valid = False
+        if not User.validate_username(username):
+            is_valid = False
+            username_error = 'Invalid username'
+
+        if not User.validate_email(email):
+            is_valid = False
+            email_error = 'Invalid email'
+
+        if not User.validate_password(password):
+            is_valid = False
+            password_error = 'Invalid password'
+
+        if password != verify:
+            is_valid = False
+            verify_error = 'Passwords do not match'
+
+        if is_valid:
+            # Register the user and set the userid cookie
+            user = User.register(username, email, password)
+            self.set_auth_cookie(user.get_urlsafe_key())
+            self.redirect('/')
+        else:
+            # Re-render the form with the error messages
+            self.render('signup_form.html',
+                        username=username,
+                        email=email,
+                        username_error=username_error,
+                        email_error=email_error,
+                        password_error=password_error,
+                        verify_error=verify_error)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),

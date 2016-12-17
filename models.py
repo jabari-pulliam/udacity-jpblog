@@ -1,4 +1,10 @@
+import re
 from google.appengine.ext import ndb
+
+
+USERNAME_PATTERN = re.compile("^[a-zA-Z0-9_-]{3,20}$")
+PASSWORD_PATTERN = re.compile("^.{3,20}$")
+EMAIL_PATTERN = re.compile("^[\S]+@[\S]+.[\S]+$")
 
 
 class User(ndb.Model):
@@ -13,6 +19,27 @@ class User(ndb.Model):
                    password=password)
         user.put()
         return user
+
+    @classmethod
+    def validate_username(cls, username):
+        return USERNAME_PATTERN.match(username)
+
+    @classmethod
+    def validate_password(cls, password):
+        return PASSWORD_PATTERN.match(password)
+
+    @classmethod
+    def validate_email(cls, email):
+        return EMAIL_PATTERN.match(email)
+
+    @classmethod
+    def get_from_urlsafe_key(cls, urlsafe_key):
+        key = ndb.Key(urlsafe=urlsafe_key)
+        if key:
+            return key.get()
+
+    def get_urlsafe_key(self):
+        return self.key.urlsafe()
 
 
 class BlogArticle(ndb.Model):
