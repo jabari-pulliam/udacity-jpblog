@@ -1,0 +1,47 @@
+/* Font: Nunito
+font-family: 'Nunito', sans-serif;
+ */
+
+header {
+    border-bottom: 1px solid black;
+}
+
+.header__title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+}
+
+.header__new-post-button {
+    float: right;
+    padding-top: 15px;
+    padding-right: 5px;
+    width: 50%;
+    order: 0;
+}
+
+.header__account-button {
+    float: right;
+    padding-top: 15px;
+    padding-left: 5px;
+    width: 50%;
+    order: 1;
+}
+
+.blog-article {
+    margin-bottom: 15px;
+}
+
+.article__title {
+    font-family: "Quicksand", sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.article__date {
+    font-family: "Quicksand", sans-serif;
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 0.7em;
+    display: block;
+}

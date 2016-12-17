@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+
+    <!-- Fonts:
+     - Nunito
+     - Quicksand
+    -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito|Quicksand:400,700|Montserrat" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+
+    <title>Expound</title>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="row">
+            <div class="col-xs-9">
+                <h1 class="header__title">Expound!</h1>
+            </div>
+            <div class="col-xs-3">
+                <img class="img-responsive header__account-button" src="images/account.svg">
+                <img class="img-responsive header__new-post-button" src="images/plus.svg">
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+        <article class="blog-article">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2 class="article__title">My First Post</h2>
+                </div>
+                <div class="col-xs-12">
+                    <span class="article__date">Jan 23, 2016</span>
+                </div>
+                <div class="col-xs-12">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <div class="blog-article__footer col-xs-12">
+                    <div class="blog-article__button">
+                        <a href="/article">DELETE</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="blog-article">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2 class="article__title">My First Post</h2>
+                </div>
+                <div class="col-xs-12">
+                    <span class="article__date">Jan 23, 2016</span>
+                </div>
+                <div class="col-xs-12">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <div class="blog-article__footer col-xs-12">
+                    <div class="blog-article__button">
+                        <a href="/article">DELETE</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="blog-article">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2 class="article__title">My First Post</h2>
+                </div>
+                <div class="col-xs-12">
+                    <span class="article__date">Jan 23, 2016</span>
+                </div>
+                <div class="col-xs-12">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <div class="blog-article__footer col-xs-12">
+                    <div class="blog-article__button">
+                        <a href="/article">DELETE</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% endblock %}
+    </main>
+</div>
+</body>
+</html>
