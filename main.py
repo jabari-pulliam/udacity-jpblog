@@ -66,11 +66,17 @@ class Handler(webapp2.RequestHandler):
         self.redirect('/')
 
 
-class MainHandler(webapp2.RequestHandler):
+class MainHandler(Handler):
     def get(self):
-        self.response.write('Hello world!')
+        self.render('home.html')
+
+
+class SignUpHandler(Handler):
+    def get(self):
+        self.render('signup_form.html')
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/signup', SignUpHandler)
 ], debug=True)

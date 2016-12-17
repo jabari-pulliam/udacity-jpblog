@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post" action="/signup">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>Sign Up</h2>
+        </div>
+    </div>
+    <div class="row signup-form-item">
+        <div class="col-xs-6"><label for="username">Username</label></div>
+        <div class="col-xs-6"><input id="username" type="text" value="{{username}}"></div>
+        <div class="col-xs-12">
+            {% if username_error %}
+                {{username_error}}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row signup-form-item">
+        <div class="col-xs-6"><label for="email">Email</label></div>
+        <div class="col-xs-6"><input id="email" type="text" value="{{email}}"></div>
+        <div class="col-xs-12">
+            {% if email_error %}
+                {{email_error}}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row signup-form-item">
+        <div class="col-xs-6"><label for="password">Password</label></div>
+        <div class="col-xs-6"><input id="password" type="password"></div>
+        <div class="col-xs-12">
+            {% if password_error %}
+                {{password_error}}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row signup-form-item">
+        <div class="col-xs-6"><label for="verify">Verify Password</label></div>
+        <div class="col-xs-6"><input id="verify" type="password"></div>
+        <div class="col-xs-12">
+            {% if verify_password_error %}
+                {{verify_password_error}}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row signup-form-item">
+        <div class="col-xs-12">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
