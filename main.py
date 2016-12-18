@@ -40,6 +40,8 @@ class Handler(webapp2.RequestHandler):
         return t.render(params)
 
     def render(self, template, **kw):
+        if self.is_user_signed_in():
+            kw['authenticated'] = True
         self.write(self.render_str(template, **kw))
 
     @classmethod
@@ -60,7 +62,6 @@ class Handler(webapp2.RequestHandler):
 
     def logout(self):
         self.response.delete_cookie("userid")
-        self.redirect('/')
 
     def get_current_user(self):
         userid_cookie = self.request.cookies.get('userid')
@@ -68,15 +69,52 @@ class Handler(webapp2.RequestHandler):
         if user_key:
             return User.get_from_urlsafe_key(user_key)
 
+    def is_user_signed_in(self):
+        userid_cookie = self.request.cookies.get('userid')
+        if not userid_cookie:
+            return False
+
+        user_key = self.check_secure_val(userid_cookie)
+        if user_key:
+            return True
+        else:
+            return False
+
 
 class MainHandler(Handler):
     def get(self):
         self.render('home.html')
 
 
-class SignUpHandler(Handler):
+class LoginHandler(Handler):
     def get(self):
-        self.render('signup_form.html')
+        if self.is_user_signed_in():
+            self.redirect('/')
+        self.render('login_form.html')
+
+    def post(self):
+        # Get the values from the form
+        username = self.request.get('username')
+        password = self.request.get('password')
+
+        # Find a user with the username and verify the password
+        user = User.find_by_username(username)
+        if user and user.password == User.hash_password(password):
+            self.set_auth_cookie(user.urlsafe_key)
+            self.redirect('/')
+        else:
+            self.render('login_form.html', error="Invalid username or password")
+
+
+class LogoutHandler(Handler):
+    def get(self):
+        self.logout()
+        self.redirect('/')
+
+
+class RegisterHandler(Handler):
+    def get(self):
+        self.render('register_form.html')
 
     def post(self):
         # Get the data from the request
@@ -115,7 +153,7 @@ class SignUpHandler(Handler):
             self.redirect('/')
         else:
             # Re-render the form with the error messages
-            self.render('signup_form.html',
+            self.render('register_form.html',
                         username=username,
                         email=email,
                         username_error=username_error,
@@ -123,7 +161,10 @@ class SignUpHandler(Handler):
                         password_error=password_error,
                         verify_error=verify_error)
 
+
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/signup', SignUpHandler)
+    ('/register', RegisterHandler),
+    ('/login', LoginHandler),
+    ('/logout', LogoutHandler)
 ], debug=True)

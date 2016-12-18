@@ -30,7 +30,11 @@
                 <h1 class="header__title">Expound!</h1>
             </div>
             <div class="action-buttons col-xs-3 text-right">
-                <i class="fa fa-sign-in fa-3x" aria-hidden="true"></i>
+                {% if authenticated %}
+                    <i class="fa fa-sign-out fa-3x" aria-hidden="true"></i>
+                {% else %}
+                    <i class="fa fa-sign-in fa-3x" aria-hidden="true"></i>
+                {% endif %}
             </div>
         </div>
     </header>

@@ -1,4 +1,5 @@
 import re
+import hmac
 from google.appengine.ext import ndb
 
 
@@ -6,14 +7,16 @@ USERNAME_PATTERN = re.compile("^[a-zA-Z0-9_-]{3,20}$")
 PASSWORD_PATTERN = re.compile("^.{3,20}$")
 EMAIL_PATTERN = re.compile("^[\S]+@[\S]+.[\S]+$")
 
-
 class User(ndb.Model):
     username = ndb.StringProperty(required=True)
     email = ndb.StringProperty(required=True)
     password = ndb.StringProperty(required=True)
 
+    PASSWORD_SALT = 'X9v1D171JvCdovjch9XT'
+
     @classmethod
     def register(cls, username, email, password):
+        password = cls.hash_password(password)
         user = cls(username=username,
                    email=email,
                    password=password)
@@ -38,7 +41,16 @@ class User(ndb.Model):
         if key:
             return key.get()
 
-    def get_urlsafe_key(self):
+    @classmethod
+    def find_by_username(cls, username):
+        return User.query(User.username == username).fetch()
+
+    @classmethod
+    def hash_password(cls, password):
+        return hmac.new(User.PASSWORD_SALT, password).hexdigest()
+
+    @property
+    def urlsafe_key(self):
         return self.key.urlsafe()
 
 
