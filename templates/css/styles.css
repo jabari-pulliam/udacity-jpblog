@@ -11,11 +11,6 @@ header {
     font-size: 32px;
 }
 
-.action-buttons {
-    float: right;
-    padding: 10px;
-}
-
 .blog-article {
     margin-bottom: 15px;
 }
@@ -43,4 +38,26 @@ header {
 .form-error {
     color: red;
     font-weight: 700;
+}
+
+.account-header {
+    font-size: 20px;
+    vertical-align: middle;
+    margin-top: 10px;
+}
+
+.account-header a, a:visited, a:active {
+    color: black;
+}
+
+.account-header__username {
+    font-size: 16px;
+}
+
+.account-header__signin {
+    text-transform: uppercase;
+}
+
+.account-header__signout {
+    text-transform: uppercase;
 }

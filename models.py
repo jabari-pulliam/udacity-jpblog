@@ -7,7 +7,12 @@ USERNAME_PATTERN = re.compile("^[a-zA-Z0-9_-]{3,20}$")
 PASSWORD_PATTERN = re.compile("^.{3,20}$")
 EMAIL_PATTERN = re.compile("^[\S]+@[\S]+.[\S]+$")
 
+
 class User(ndb.Model):
+    """
+    A user entity. The username is the key.
+    """
+
     username = ndb.StringProperty(required=True)
     email = ndb.StringProperty(required=True)
     password = ndb.StringProperty(required=True)
@@ -20,11 +25,19 @@ class User(ndb.Model):
         user = cls(username=username,
                    email=email,
                    password=password)
+
+        # Set the username as the key
+        user.key = ndb.Key(cls, username)
+
         user.put()
         return user
 
     @classmethod
     def validate_username(cls, username):
+        key = ndb.Key(cls, username)
+        user = key.get()
+        if user:
+            return False
         return USERNAME_PATTERN.match(username)
 
     @classmethod
@@ -36,22 +49,13 @@ class User(ndb.Model):
         return EMAIL_PATTERN.match(email)
 
     @classmethod
-    def get_from_urlsafe_key(cls, urlsafe_key):
-        key = ndb.Key(urlsafe=urlsafe_key)
-        if key:
-            return key.get()
-
-    @classmethod
     def find_by_username(cls, username):
-        return User.query(User.username == username).fetch()
+        key = ndb.Key(cls, username)
+        return key.get()
 
     @classmethod
     def hash_password(cls, password):
         return hmac.new(User.PASSWORD_SALT, password).hexdigest()
-
-    @property
-    def urlsafe_key(self):
-        return self.key.urlsafe()
 
 
 class BlogArticle(ndb.Model):
