@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% import 'blog_post.html' as blog_posts %}
+{% block content %}
+    {{ blog_posts.blog_post_view(post, current_user) }}
+{% endblock %}

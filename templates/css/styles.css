@@ -1,7 +1,18 @@
-/* Font: Nunito
-font-family: 'Nunito', sans-serif;
+/*
+Global Stuff
  */
+.form-error {
+    color: red;
+    font-weight: 700;
+}
 
+.error-message {
+    color: red;
+}
+
+/*
+Header
+ */
 header {
     border-bottom: 1px solid black;
 }
@@ -11,53 +22,89 @@ header {
     font-size: 32px;
 }
 
-.blog-article {
+/*
+Navigation Menu
+ */
+nav {
+    border-bottom: 1px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.nav-item {
+    text-transform: uppercase;
+    text-align: center;
+    color: black;
+}
+
+.nav-item__link {
+    color: black;
+}
+
+.nav-item__link:visited {
+    color: black;
+}
+
+.nav-item__link:hover {
+    text-decoration: underline;
+}
+
+.nav-item__link:active {
+    text-decoration: underline;
+}
+
+
+/*
+Sign Up Form
+ */
+.form-item {
+    margin-top: 0.8em;
+    margin-bottom: 0.8em;
+}
+
+/**
+New Post Form
+ */
+textarea.new-post__content-text {
+    margin-bottom: 10px;
+}
+
+/**
+Content
+ */
+.content-placeholder {
+    margin-top: 25vh;
+}
+
+.content-placeholder__paragraph {
+    font-size: 24px;
+}
+
+.blog-post {
     margin-bottom: 15px;
 }
 
-.article__title {
+.blog-post__title {
     font-family: "Quicksand", sans-serif;
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 5px;
 }
 
-.article__date {
-    font-family: "Quicksand", sans-serif;
-    font-size: 16px;
-    color: #ccc;
+.blog-post__info {
+    font-size: 14px;
+    color: #333333;
     margin-bottom: 0.7em;
+    padding-bottom: 0.3em;
     display: block;
+    border-bottom: 1px solid #ccc;
 }
 
-.form-item {
-    margin-top: 0.8em;
-    margin-bottom: 0.8em;
+.blog-post__footer {
+    margin-top: 1.0em;
 }
 
-.form-error {
-    color: red;
-    font-weight: 700;
-}
-
-.account-header {
-    font-size: 20px;
-    vertical-align: middle;
-    margin-top: 10px;
-}
-
-.account-header a, a:visited, a:active {
-    color: black;
-}
-
-.account-header__username {
-    font-size: 16px;
-}
-
-.account-header__signin {
-    text-transform: uppercase;
-}
-
-.account-header__signout {
-    text-transform: uppercase;
+.blog-post-control {
+    margin-right: 5px;
 }

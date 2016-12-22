@@ -16,12 +16,13 @@
 #
 import os
 import hmac
+from datetime import datetime
 
 import webapp2
 import jinja2
 
 from models import User
-from models import BlogArticle
+from models import BlogPost
 
 BASE_URL = '/'
 SECRET = 'X9v1D171JvCdovjch9XT'
@@ -30,6 +31,19 @@ COOKIE_USERNAME = "username"
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
+
+#
+# Custom Filters
+#
+def datetimeformat(value):
+    now = datetime.now()
+    if now.year != value.year:
+        fmt_str = '%b %-d %Y'
+    else:
+        fmt_str = '%b %-d'
+    return value.strftime(fmt_str)
+
+jinja_env.filters['datetimeformat'] = datetimeformat
 
 
 class Handler(webapp2.RequestHandler):
@@ -63,9 +77,13 @@ class Handler(webapp2.RequestHandler):
         :param kw: The template parameters
         :return:
         """
+        # Pass the URL of the page that sent the request this response is to
+        kw['request_url'] = self.request.url
+
+        # Pass the username to the template if a user is logged in
         username = self.username
         if username:
-            jinja_env.globals['current_user'] = username
+            kw['current_user'] = username
         self.write(self.render_str(template, **kw))
 
     @classmethod
@@ -143,14 +161,17 @@ class Handler(webapp2.RequestHandler):
 
 class MainHandler(Handler):
     def get(self):
-        self.render('home.html')
+        # Get all of the posts
+        posts = BlogPost.query().fetch()
+
+        self.render('home.html', page_title='Home', posts=posts)
 
 
 class SignInHandler(Handler):
     def get(self):
         if self.username:
             self.redirect('/')
-        self.render('sign_in_form.html')
+        self.render('sign_in_form.html', page_title='Sign In')
 
     def post(self):
         # Get the values from the form
@@ -161,7 +182,8 @@ class SignInHandler(Handler):
         if self.login(username, password):
             self.redirect('/')
         else:
-            self.render('sign_in_form.html', error="Invalid username or password")
+            self.render('sign_in_form.html', page_title='Sign In',
+                        error="Invalid username or password")
 
 
 class LogoutHandler(Handler):
@@ -172,7 +194,7 @@ class LogoutHandler(Handler):
 
 class SignUpHandler(Handler):
     def get(self):
-        self.render('sign_up_form.html')
+        self.render('sign_up_form.html', page_title='Sign Up')
 
     def post(self):
         # Get the data from the request
@@ -220,9 +242,44 @@ class SignUpHandler(Handler):
                         verify_error=verify_error)
 
 
+class ViewPostHandler(Handler):
+    def get(self, post_id):
+        post = BlogPost.get_by_id(int(post_id))
+        if post:
+            self.render('view_post.html', page_title=post.title, post=post)
+
+
+class NewPostHandler(Handler):
+    def get(self):
+        self.render('new_post_form.html', page_title='New Post')
+
+    def post(self):
+        title = self.request.get("title")
+        content = self.request.get("content")
+
+        new_post = BlogPost.create(title, content, User.make_key(self.username))
+        new_post.put()
+
+        self.redirect("/posts/%s" % new_post.key.id())
+
+
+class UserPostsHandler(Handler):
+    def get(self, username):
+        user = User.get_by_id(username)
+        if not user:
+            self.response.set_status(404, "No user found")
+            self.render('error_page.html', page_title='Error', error_message="No user found")
+        else:
+            posts = BlogPost.find_by_created_by(user.key)
+            self.render('home.html', page_title='My Posts', posts=posts)
+
+
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/signup', SignUpHandler),
     ('/signin', SignInHandler),
-    ('/logout', LogoutHandler)
+    ('/logout', LogoutHandler),
+    ('/posts/new', NewPostHandler),
+    ('/posts/(\d+)', ViewPostHandler),
+    webapp2.Route('/users/<username>/posts', UserPostsHandler),
 ], debug=True)

@@ -1,0 +1,35 @@
+{% macro blog_post_view(post, current_user) %}
+    <article class="blog-post">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="blog-post__title"><a href="/posts/{{ post.key.id() }}">{{ post.title }}</a></h2>
+            </div>
+            <div class="col-xs-12">
+                <div class="blog-post__info">
+                    by {{ post.created_by.id() }} on {{ post.created_at | datetimeformat }}
+                </div>
+            </div>
+            <div class="col-xs-12">
+                {{ post.content }}
+            </div>
+            <div class="col-xs-12">
+                <div class="blog-post__footer">
+                    <form method="post" action="/posts/{{ post.key.id() }}/like">
+                        <input type="hidden" name="from-url" value="{{ request_url }}">
+                        <button class="blog-post-control btn btn-default btn-xs">
+                            {{ post.liked_by | length }} likes
+                        </button>
+                        {% if current_user %}
+                            <a role="button"
+                               class="blog-post-control btn btn-default btn-xs"
+                               href="/posts/{{ post.key.id() }}/delete">Delete</a>
+                            <a role="button"
+                               class="blog-post-control btn btn-default btn-xs"
+                               href="/posts/{{ post.key.id() }}/edit">Edit</a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </article>
+{% endmacro %}

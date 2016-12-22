@@ -1,0 +1,8 @@
+{% macro nav_button(uri, text, btn_count) %}
+    {% set col_class_suffix = (12 / btn_count) %}
+    <div class="nav-item col-xs-{{ col_class_suffix | int }}">
+        <a role="button"
+           class="nav-item__link btn btn-link btn-sm"
+           href="{{ uri }}">{{ text }}</a>
+    </div>
+{% endmacro %}

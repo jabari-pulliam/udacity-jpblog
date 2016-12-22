@@ -1,4 +1,17 @@
 {% extends "base.html" %}
-{% block content %}
 
+{% import 'blog_post.html' as blog_posts %}
+
+{% block content %}
+    {% if not posts %}
+        <div class="row">
+            <div class="content-placeholder col-xs-12">
+                <p class="content-placeholder__paragraph text-center">No posts yet. Let's get started!</p>
+            </div>
+        </div>
+    {% else %}
+        {% for post in posts %}
+            {{ blog_posts.blog_post_view(post, current_user) }}
+        {% endfor %}
+    {% endif %}
 {% endblock %}
