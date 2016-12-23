@@ -6,7 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
 
-    <!-- Latest compiled and minified CSS -->
+    <!-- Font Awesome CDN -->
+    <script src="https://use.fontawesome.com/b7365ecae4.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous">
@@ -30,7 +33,7 @@
 
     {% block navigation %}
     <nav>
-        {% import 'nav_util.html' as nav_util %}
+        {% import 'macros/nav_util.html' as nav_util %}
         <div class="row">
             {% if current_user %}
                 {% set btn_count = 4 %}

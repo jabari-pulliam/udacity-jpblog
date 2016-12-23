@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% import 'blog_post.html' as blog_posts %}
+{% import 'macros/blog_posts.html' as blog_posts %}
 
 {% block content %}
     {% if not posts %}
@@ -11,7 +11,7 @@
         </div>
     {% else %}
         {% for post in posts %}
-            {{ blog_posts.blog_post_view(post, current_user) }}
+            {{ blog_posts.blog_post_view(post, current_user, False) }}
         {% endfor %}
     {% endif %}
 {% endblock %}

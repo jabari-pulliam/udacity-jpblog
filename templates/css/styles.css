@@ -85,14 +85,14 @@ Content
     margin-bottom: 15px;
 }
 
-.blog-post__title {
+.blog-post-header__title {
     font-family: "Quicksand", sans-serif;
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 5px;
 }
 
-.blog-post__info {
+.blog-post-header__info {
     font-size: 14px;
     color: #333333;
     margin-bottom: 0.7em;
@@ -101,10 +101,33 @@ Content
     border-bottom: 1px solid #ccc;
 }
 
-.blog-post__footer {
-    margin-top: 1.0em;
+.blog-post-footer {
+    margin: 7px 0;
 }
 
 .blog-post-control {
     margin-right: 5px;
+}
+
+.blog-post-comments {
+    margin-top: 7px;
+}
+
+.blog-post-comments-header {
+    background-color: #cccccc;
+    padding: 3px 5px;
+}
+
+.blog-post-comments__heading {
+    margin: 5px;
+    padding: 3px;
+}
+
+.blog-post-comments__add-comment {
+    margin: 10% 5px;
+}
+
+.blog-post-comment {
+    background-color: #BDBDBD;
+    margin-bottom: 2px;
 }

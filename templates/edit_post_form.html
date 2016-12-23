@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+    {% import 'macros/blog_posts.html' as blog_posts %}
+    {{ blog_posts.blog_post_form('/posts/%s/edit' % post.key.id(), post) }}
+{% endblock %}

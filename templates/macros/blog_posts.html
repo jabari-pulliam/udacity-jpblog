@@ -1,0 +1,94 @@
+{% macro blog_post_view(post, current_user, show_comments=False) %}
+    <article class="blog-post">
+        <div class="blog-post-header">
+            <h2 class="blog-post-header__title"><a href="/posts/{{ post.key.id() }}">{{ post.title }}</a></h2>
+            <p class="blog-post-header__info">by {{ post.created_by.id() }} on {{ post.created_at | datetimeformat }}</p>
+            <div class="row">
+                <div class="col-xs-12 col-md-8">
+                    <div class="blog-post-content">{{ post.content }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blog-post-footer">
+            <form method="post" action="/posts/{{ post.key.id() }}/like">
+                <button class="blog-post-control btn btn-default btn-xs">
+                    {{ post.liked_by | length }} likes
+                </button>
+                {% if current_user %}
+                    <button class="blog-post-control btn btn-default btn-xs"
+                            formaction="/posts/{{ post.key.id() }}/delete">
+                        Delete
+                    </button>
+                    <a role="button"
+                       class="blog-post-control btn btn-default btn-xs"
+                       href="/posts/{{ post.key.id() }}/edit">Edit</a>
+                {% endif %}
+            </form>
+        </div>
+
+        {% if show_comments %}
+        <div class="row">
+            <div class="col-xs-12 col-md-8">
+                <div class="blog-post-comments">
+                    <div class="blog-post-comments-header">
+                        <div class="row">
+                            <div class="col-xs-9 col-md-5">
+                                <h4 class="blog-post-comments__heading">Comments</h4>
+                            </div>
+                            <div class="col-xs-3 col-md-3">
+                                <a role="button"
+                                   href="/posts/{{ post.key.id() }}/comment/new"
+                                   class="blog-post-comments__add-comment
+                                          btn btn-default btn-xs pull-right">Add Comment</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for comment in post.comments %}
+                    <div class="blog-post-comment">
+                        <div class="blog-post-comment-header">
+                    <span class="blog-post-comment-header__info">
+                        by {{ comment.created_by.id() }} on {{ comment.created_at | datetimeformat }}
+                    </span>
+                        </div>
+                        <div class="blog-post-comment__body">
+                            {{ comment.text }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </article>
+{% endmacro %}
+
+{% macro blog_post_form(action, post=None) %}
+    <form method="post" action="{{ action }}">
+        <div class="row">
+            <div class="col-xs-12 col-md-8">
+                <h3>{{ 'Edit' if post else 'New' }} Post</h3>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input id="title"
+                           class="form-control"
+                           name="title"
+                           type="text"
+                           value="{{ post.title if post }}">
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea id="content"
+                              name="content"
+                              class="form-control"
+                              rows="10">{{ post.content if post }}</textarea>
+                </div>
+                <div class="form-group">
+                    <button class="new-post__submit btn btn-primary">Save</button>
+                    <a role="button" class="btn btn-default" href="/posts/{{ post.key.id() if post }}">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endmacro %}

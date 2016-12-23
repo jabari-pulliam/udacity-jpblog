@@ -1,0 +1,8 @@
+{% macro comment_form(action, current_user, post, comment=None) %}
+<form method="post" action="{{ action }}">
+    <h3>{{ 'Edit' if comment else 'New' }} Comment</h3>
+    <textarea name="body">{{ comment.body if comment }}</textarea>
+    <button type="submit">Save</button>
+    <a role="button" href="/posts/{{ post.key.id() }}" class="btn btn-default">Cancel</a>
+</form>
+{% endmacro %}
