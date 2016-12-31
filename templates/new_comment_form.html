@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% import 'macros/comments.html' as comments %}
+    {{ comments.comment_form('/posts/%s/comment/new' % post.key.id(), current_user, post) }}
+{% endblock %}

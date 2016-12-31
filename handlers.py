@@ -1,11 +1,13 @@
-from core import Handler
-from core import login_required
-from core import NotAuthorizedException
-from core import NotFoundException
-
-from models import BlogPost
+"""
+This module contains the request handlers
+"""
 
 import use_cases
+from core import Handler
+from core import NotFoundException
+from core import NotAuthorizedException
+from core import login_required
+from models import BlogPost
 
 
 class MainHandler(Handler):
@@ -94,7 +96,7 @@ class SignUpHandler(Handler):
 
 class ViewPostHandler(Handler):
     def get(self, post_id):
-        post = use_cases.get_post_by_id(int(post_id))
+        post = use_cases.get_post_by_id(long(post_id))
         if post:
             self.render('view_post.html', page_title=post.title, post=post)
 
@@ -117,10 +119,7 @@ class UserPostsHandler(Handler):
     def get(self, username):
         user = use_cases.get_user_by_username(username)
         if not user:
-            self.response.set_status(404, "No user found")
-            self.render('error_page.html',
-                        page_title='Error',
-                        error_message="No user found")
+            raise NotFoundException(message='User not found')
         else:
             posts = use_cases.find_posts_by_created_by(user.key)
             self.render('home.html', page_title='My Posts', posts=posts)
@@ -130,34 +129,17 @@ class DeletePostHandler(Handler):
     @login_required
     def post(self, post_id):
         username = self.username
-        try:
-            use_cases.delete_post(int(post_id), username)
-            self.redirect('/users/%s/posts' % username)
-        except NotFoundException:
-            self.response.set_status(404, "Post not found")
-            self.render('error_page.html',
-                        page_title="Error",
-                        error_message="Post not found")
-        except NotAuthorizedException:
-            self.response.set_status(403, 'User not authorized')
-            self.render('error_page.html',
-                        page_title='Error',
-                        error_message='User not authorized to delete this post')
+        use_cases.delete_post(long(post_id), username)
+        self.redirect('/users/%s/posts' % username)
 
 
 class LikePostHandler(Handler):
     @login_required
     def post(self, post_id):
-        try:
-            use_cases.like_post(int(post_id), self.username)
+        use_cases.like_post(long(post_id), self.username)
 
-            # Redirect the user back to the page that submitted the request
-            self.redirect('/posts/%s' % post_id)
-        except NotFoundException:
-            self.response.set_status(404, "Post not found")
-            self.render('error_page.html',
-                        page_title="Error",
-                        error_message="Post not found")
+        # Redirect the user back to the page that submitted the request
+        self.redirect('/posts/%s' % post_id)
 
 
 class EditPostHandler(Handler):
@@ -165,28 +147,63 @@ class EditPostHandler(Handler):
     def get(self, post_id):
         post = use_cases.get_post_by_id(int(post_id))
         if post:
-            self.render('edit_post_form.html', page_title='Edit Post', post=post)
+            if post.created_by.id() == self.username:
+                self.render('edit_post_form.html', page_title='Edit Post', post=post)
+            else:
+                raise NotAuthorizedException('You are not authorized to edit this post')
         else:
-            self.render('error_page.html',
-                        page_title="Error",
-                        error_message="Post not found")
+            raise NotFoundException(message='Post not found')
 
     @login_required
     def post(self, post_id):
         content = self.request.get('content').strip()
         title = self.request.get('title').strip()
-        try:
-            use_cases.edit_post(int(post_id), title, content, self.username)
+        use_cases.edit_post(long(post_id), title, content, self.username)
 
-            # Redirect the user back to the page that submitted the request
-            self.redirect('/posts/%s' % post_id)
-        except NotFoundException:
-            self.response.set_status(404, 'Post not found')
-            self.render('error_page.html',
-                        page_title='Error',
-                        error_message='Post not found')
-        except NotAuthorizedException:
-            self.response.set_status(403, 'User not authorized')
-            self.render('error_page.html',
-                        page_title='Error',
-                        error_message='User not authorized to edit this post')
+        # Redirect the user back to the page that submitted the request
+        self.redirect('/posts/%s' % post_id)
+
+
+class NewCommentHandler(Handler):
+    @login_required
+    def get(self, post_id):
+        post = use_cases.get_post_by_id(long(post_id))
+        self.render('new_comment_form.html', post=post)
+
+    @login_required
+    def post(self, post_id):
+        body = self.request.get('body').strip()
+        use_cases.add_comment_to_post(long(post_id), body, self.username)
+        self.redirect('/posts/%s' % post_id)
+
+
+class EditCommentHandler(Handler):
+    @login_required
+    def get(self, comment_id):
+        comment = use_cases.get_comment_by_id(long(comment_id))
+        if not comment:
+            raise NotFoundException('Comment not found')
+
+        if comment.created_by.id() != self.username:
+            raise NotAuthorizedException('You are not authorized to edit this comment')
+
+        post = use_cases.get_post_by_id(comment.post.id())
+        if not post:
+            raise NotFoundException('Post not found')
+
+        self.render('edit_comment_form.html', comment=comment, post=post)
+
+    @login_required
+    def post(self, comment_id):
+        comment_body = self.request.get('body').strip()
+        use_cases.edit_comment(long(comment_id), comment_body, self.username)
+        comment = use_cases.get_comment_by_id(long(comment_id))
+        self.redirect('/posts/%s' % comment.post.id())
+
+
+class DeleteCommentHandler(Handler):
+    @login_required
+    def get(self, comment_id):
+        comment_id = long(comment_id)
+        post_id = use_cases.delete_comment(comment_id)
+        self.redirect('/posts/%s' % post_id)

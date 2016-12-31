@@ -1,8 +1,14 @@
+"""
+This module contains core base classes and utilities
+"""
+
 import os
+import traceback
 import hmac
 from datetime import datetime
 from functools import wraps
 
+import logging
 import webapp2
 import jinja2
 
@@ -14,11 +20,20 @@ COOKIE_USERNAME = "username"
 #
 # Exceptions
 #
-class NotAuthorizedException(Exception):
+class Error(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+class NotAuthorizedException(Error):
     pass
 
 
-class NotFoundException(Exception):
+class NotFoundException(Error):
+    pass
+
+
+class NotAuthenticatedException(Error):
     pass
 
 
@@ -125,6 +140,22 @@ class Handler(webapp2.RequestHandler):
         :return:
         """
         self.response.delete_cookie(COOKIE_USERNAME)
+
+    def handle_exception(self, exception, debug):
+        page_title = 'Error'
+        logging.log(logging.ERROR, traceback.format_exc())
+        if isinstance(exception, NotFoundException):
+            self.response.set_status(404, exception.message)
+            self.render('error_page.html', page_title=page_title, error_message=exception.message)
+        elif isinstance(exception, NotAuthorizedException):
+            self.response.set_status(401, exception.message)
+            self.render('error_page.html', page_title=page_title, error_message=exception.message)
+        elif isinstance(exception, webapp2.HTTPException):
+            self.response.set_status(exception.code, exception.message)
+            self.render('error_page.html', page_title=page_title, error_message='Oops, something went wrong')
+        else:
+            self.response.set_status(500, exception.message)
+            self.render('error_page.html', page_title=page_title, error_message='Oops, something went wrong')
 
 
 def login_required(func):

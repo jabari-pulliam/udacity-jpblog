@@ -1,8 +1,15 @@
 {% macro comment_form(action, current_user, post, comment=None) %}
-<form method="post" action="{{ action }}">
+<form class="comment-form" method="post" action="{{ action }}">
     <h3>{{ 'Edit' if comment else 'New' }} Comment</h3>
-    <textarea name="body">{{ comment.body if comment }}</textarea>
-    <button type="submit">Save</button>
-    <a role="button" href="/posts/{{ post.key.id() }}" class="btn btn-default">Cancel</a>
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <textarea class="comment-form__body form-control"
+                      name="body" cols="50" rows="15">{{ comment.text if comment }}</textarea>
+            <div class="comment-form__buttons form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a role="button" href="/posts/{{ post.key.id() }}" class="btn btn-default">Cancel</a>
+            </div>
+        </div>
+    </div>
 </form>
 {% endmacro %}
