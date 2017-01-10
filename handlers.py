@@ -148,9 +148,11 @@ class EditPostHandler(Handler):
         post = use_cases.get_post_by_id(int(post_id))
         if post:
             if post.created_by.id() == self.username:
-                self.render('edit_post_form.html', page_title='Edit Post', post=post)
+                self.render('edit_post_form.html',
+                            page_title='Edit Post', post=post)
             else:
-                raise NotAuthorizedException('You are not authorized to edit this post')
+                raise NotAuthorizedException(
+                    'You are not authorized to edit this post')
         else:
             raise NotFoundException(message='Post not found')
 
@@ -185,7 +187,8 @@ class EditCommentHandler(Handler):
             raise NotFoundException('Comment not found')
 
         if comment.created_by.id() != self.username:
-            raise NotAuthorizedException('You are not authorized to edit this comment')
+            raise NotAuthorizedException(
+                'You are not authorized to edit this comment')
 
         post = use_cases.get_post_by_id(comment.post.id())
         if not post:
@@ -205,5 +208,5 @@ class DeleteCommentHandler(Handler):
     @login_required
     def get(self, comment_id):
         comment_id = long(comment_id)
-        post_id = use_cases.delete_comment(comment_id)
+        post_id = use_cases.delete_comment(comment_id, self.username)
         self.redirect('/posts/%s' % post_id)

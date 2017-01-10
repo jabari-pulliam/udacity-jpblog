@@ -5,6 +5,7 @@ This module contains core base classes and utilities
 import os
 import traceback
 import hmac
+import hashlib
 from datetime import datetime
 from functools import wraps
 
@@ -100,7 +101,7 @@ class Handler(webapp2.RequestHandler):
         :param s: The value
         :return: A tamper-proof string
         """
-        return '%s|%s' % (s, hmac.new(SECRET, s).hexdigest())
+        return '%s|%s' % (s, hmac.new(SECRET, s, hashlib.sha256).hexdigest())
 
     @classmethod
     def check_secure_val(cls, s):
@@ -132,7 +133,8 @@ class Handler(webapp2.RequestHandler):
         :param username: The username
         :return:
         """
-        self.response.set_cookie(COOKIE_USERNAME, Handler.make_secure_val(username))
+        self.response.set_cookie(COOKIE_USERNAME,
+                                 Handler.make_secure_val(username))
 
     def logout(self):
         """
@@ -146,16 +148,20 @@ class Handler(webapp2.RequestHandler):
         logging.log(logging.ERROR, traceback.format_exc())
         if isinstance(exception, NotFoundException):
             self.response.set_status(404, exception.message)
-            self.render('error_page.html', page_title=page_title, error_message=exception.message)
+            self.render('error_page.html', page_title=page_title,
+                        error_message=exception.message)
         elif isinstance(exception, NotAuthorizedException):
             self.response.set_status(401, exception.message)
-            self.render('error_page.html', page_title=page_title, error_message=exception.message)
+            self.render('error_page.html', page_title=page_title,
+                        error_message=exception.message)
         elif isinstance(exception, webapp2.HTTPException):
             self.response.set_status(exception.code, exception.message)
-            self.render('error_page.html', page_title=page_title, error_message='Oops, something went wrong')
+            self.render('error_page.html', page_title=page_title,
+                        error_message='Oops, something went wrong')
         else:
             self.response.set_status(500, exception.message)
-            self.render('error_page.html', page_title=page_title, error_message='Oops, something went wrong')
+            self.render('error_page.html', page_title=page_title,
+                        error_message='Oops, something went wrong')
 
 
 def login_required(func):

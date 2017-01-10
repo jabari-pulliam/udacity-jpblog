@@ -92,7 +92,8 @@ class BlogPost(ndb.Model):
         :param user: The key of the user
         :return:
         """
-        post = cls(title=title, content=content, created_by=user, liked_by=[], comment_keys=[])
+        post = cls(title=title, content=content, created_by=user, liked_by=[],
+                   comment_keys=[])
         post.put()
         return post
 

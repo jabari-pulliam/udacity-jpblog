@@ -93,7 +93,8 @@ def find_posts_by_created_by(user_key):
     :param user_key: The user's key
     :return: A list of posts
     """
-    return ndb.gql('SELECT * FROM BlogPost WHERE created_by = :1', user_key).fetch()
+    return ndb.gql('SELECT * FROM BlogPost WHERE created_by = :1',
+                   user_key).fetch()
 
 
 def create_new_post(title, content, username):
@@ -120,7 +121,8 @@ def delete_post(post_id, username):
     if not post:
         raise NotFoundException('Post not found')
     if post.created_by.id() != username:
-        raise NotAuthorizedException('User is not authorized to delete this post')
+        raise NotAuthorizedException(
+            'User is not authorized to delete this post')
 
     # Delete the post's comments
     ndb.delete_multi(post.comment_keys)
@@ -139,7 +141,8 @@ def add_comment_to_post(post_id, comment_text, username):
     post = BlogPost.get_by_id(post_id)
     user = User.get_by_id(username)
     if post and user:
-        comment = Comment.create(text=comment_text, post_key=post.key, created_by_key=user.key)
+        comment = Comment.create(text=comment_text, post_key=post.key,
+                                 created_by_key=user.key)
         post.add_comment(comment.key)
         post.put()
     else:
@@ -186,7 +189,8 @@ def delete_comment(comment_id, current_user):
         raise NotFoundException('Comment not found')
 
     if comment.created_by.id() != current_user:
-        raise NotAuthorizedException('You are not authorized to delete this comment')
+        raise NotAuthorizedException(
+            'You are not authorized to delete this comment')
 
     # Find the post if it exists
     post = comment.post.get()
@@ -236,6 +240,7 @@ def edit_post(post_id, title, content, username):
             post.content = content
             post.put()
         else:
-            raise NotAuthorizedException('User is not authorized to edit this post')
+            raise NotAuthorizedException(
+                'User is not authorized to edit this post')
     else:
         raise NotFoundException('Post not found')
